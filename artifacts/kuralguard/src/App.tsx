@@ -14,9 +14,9 @@ const queryClient = new QueryClient();
 type Tab = 'verify' | 'guard' | 'evaluation';
 
 const tabs: { id: Tab; label: string; icon: typeof ScanText; note: string }[] = [
-  { id: 'verify', label: 'Verify', icon: FileSearch, note: 'One quote, carefully checked' },
-  { id: 'guard', label: 'Guard', icon: ShieldCheck, note: 'Review an entire answer' },
-  { id: 'evaluation', label: 'Evaluation', icon: Gauge, note: 'Inspect corpus performance' },
+  { id: 'verify', label: 'சரிபார்', icon: FileSearch, note: 'ஒரு மேற்கோளைத் துல்லியமாகச் சரிபார்க்கவும்' },
+  { id: 'guard', label: 'பதில் சோதனை', icon: ShieldCheck, note: 'முழுப் பதிலிலுள்ள மேற்கோள்களைத் தேடவும்' },
+  { id: 'evaluation', label: 'மதிப்பீடு', icon: Gauge, note: 'தொகுப்பின் செயல்திறனைக் காண்க' },
 ];
 
 function Home() {
@@ -31,49 +31,49 @@ function Home() {
           <div>
             <Brand />
             <div className="mt-14">
-              <p className="mb-3 px-3 font-data text-[10px] uppercase tracking-[.2em] text-sidebar-foreground/45">Workspace</p>
-              <nav className="space-y-1" aria-label="Workspace tools">
+              <p className="mb-3 px-3 font-data text-[10px] uppercase tracking-[.2em] text-sidebar-foreground/45">கருவிகள்</p>
+              <nav className="space-y-1" aria-label="KuralGuard கருவிகள்">
                 {tabs.map((tab, index) => {
                   const Icon = tab.icon;
                   return <button key={tab.id} data-testid={`tab-${tab.id}`} onClick={() => setActiveTab(tab.id)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors ${activeTab === tab.id ? 'bg-sidebar-accent text-sidebar-accent-foreground' : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground'}`}>
                     <Icon size={17} strokeWidth={1.8} />
                     <span className="flex-1 text-sm font-medium">{tab.label}</span>
                     {activeTab === tab.id && <span className="h-1.5 w-1.5 rounded-full bg-sidebar-primary" />}
-                    <span className="sr-only">Section {index + 1}</span>
+                    <span className="sr-only">பிரிவு {index + 1}</span>
                   </button>;
                 })}
               </nav>
             </div>
             <div className="mt-12 rounded-2xl border border-sidebar-border/80 bg-sidebar-accent/35 p-4">
-              <div className="flex items-center gap-2 text-sidebar-primary"><Leaf size={15} /><span className="font-data text-[10px] uppercase tracking-[.18em]">Our promise</span></div>
-              <p className="mt-3 text-[13px] leading-6 text-sidebar-foreground/75">A missing match is not proof of a false quote. We check the corpus; people carry the wisdom.</p>
+              <div className="flex items-center gap-2 text-sidebar-primary"><Leaf size={15} /><span className="font-data text-[10px] uppercase tracking-[.18em]">எங்கள் உறுதி</span></div>
+              <p className="mt-3 text-[13px] leading-6 text-sidebar-foreground/75">பொருத்தம் இல்லாததால் மேற்கோள் தவறானது என்று சொல்ல முடியாது. தொகுப்பில் தேடுகிறோம்; உறுதிப்படுத்த தமிழ் அறிஞரிடம் ஆலோசிக்கவும்.</p>
             </div>
           </div>
           <div className="border-t border-sidebar-border pt-5">
             <div className="flex items-center gap-2.5">
               <span className={`h-2 w-2 rounded-full ${health.isError && healthz.isError ? 'bg-amber-300' : apiOnline ? 'bg-emerald-300' : 'bg-sidebar-primary animate-pulse'}`} />
-              <span className="text-xs text-sidebar-foreground/70" data-testid="status-api">{health.isError && healthz.isError ? 'Service unavailable' : apiOnline ? 'Corpus service connected' : 'Connecting to corpus'}</span>
+              <span className="text-xs text-sidebar-foreground/70" data-testid="status-api">{health.isError && healthz.isError ? 'சேவை கிடைக்கவில்லை' : apiOnline ? 'குறள் தொகுப்புடன் இணைக்கப்பட்டது' : 'தொகுப்புடன் இணைக்கிறது…'}</span>
             </div>
-            <p className="mt-3 font-data text-[10px] tracking-wide text-sidebar-foreground/40">TIRUKKURAL · 1330 COUPLETS</p>
+            <p className="mt-3 font-data text-[10px] tracking-wide text-sidebar-foreground/40">திருக்குறள் · 1330 குறள்கள்</p>
           </div>
         </aside>
         <section className="min-w-0 flex-1">
           <header className="sticky top-0 z-20 flex h-[68px] items-center justify-between border-b border-border/80 bg-background/95 px-5 backdrop-blur-md sm:px-8 lg:px-12">
             <div className="flex items-center gap-3 md:hidden"><Brand compact /></div>
-            <p className="hidden font-data text-[10px] uppercase tracking-[.2em] text-muted-foreground md:block">A careful reader for a living tradition</p>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground"><span className={`h-1.5 w-1.5 rounded-full ${apiOnline ? 'bg-primary' : 'bg-amber-500'}`} /><span data-testid="text-service-state">{health.isError && healthz.isError ? 'Service unavailable' : apiOnline ? 'Corpus online' : 'Checking service'}</span></div>
+            <p className="hidden font-data text-[10px] uppercase tracking-[.2em] text-muted-foreground md:block">மரபுச் செல்வத்தை மதிக்கும் தேடல்</p>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground"><span className={`h-1.5 w-1.5 rounded-full ${apiOnline ? 'bg-primary' : 'bg-amber-500'}`} /><span data-testid="text-service-state">{health.isError && healthz.isError ? 'சேவை கிடைக்கவில்லை' : apiOnline ? 'தொகுப்பு இணைப்பில் உள்ளது' : 'சேவையைச் சரிபார்க்கிறது…'}</span></div>
           </header>
           <div className="mx-auto max-w-[1080px] px-5 pb-14 pt-9 sm:px-8 sm:pt-12 lg:px-12">
             <div className="mb-9 reveal">
-              <div className="flex items-center gap-2 font-data text-[10px] uppercase tracking-[.22em] text-primary"><span className="h-px w-6 bg-primary" />Tamil literature, handled with care</div>
-              <h1 className="mt-4 max-w-3xl font-display text-[2.35rem] leading-[1.12] tracking-[-.035em] text-foreground sm:text-[3.4rem]">Words deserve <em className="font-display font-medium text-primary">provenance.</em></h1>
-              <p className="mt-4 max-w-[590px] text-[15px] leading-7 text-muted-foreground">Check a quotation against the local Tirukkural corpus. An exact match can be confirmed; an uncertain one stays uncertain.</p>
+              <div className="flex items-center gap-2 font-data text-[10px] uppercase tracking-[.22em] text-primary"><span className="h-px w-6 bg-primary" />தமிழ் இலக்கியம் · ஆதாரத்துடன்</div>
+              <h1 className="mt-4 max-w-3xl font-display text-[2.35rem] leading-[1.12] tracking-[-.035em] text-foreground sm:text-[3.4rem]">சொல்லின் <em className="font-display font-medium text-primary">மூலத்தை</em> அறியுங்கள்.</h1>
+              <p className="mt-4 max-w-[590px] text-[15px] leading-7 text-muted-foreground">மேற்கோளை உள்ளூர் திருக்குறள் தொகுப்புடன் ஒப்பிடுங்கள். அப்படியே பொருந்தினால் உறுதிப்படுத்தலாம்; சந்தேகம் இருந்தால் உறுதியற்றதாகவே தெரிவிப்போம்.</p>
             </div>
-            <div className="mb-8 grid grid-cols-3 gap-1 rounded-2xl border border-border bg-card p-1.5 md:hidden" role="tablist" aria-label="KuralGuard tools">
+            <div className="mb-8 grid grid-cols-3 gap-1 rounded-2xl border border-border bg-card p-1.5 md:hidden" role="tablist" aria-label="KuralGuard கருவிகள்">
               {tabs.map((tab) => { const Icon = tab.icon; return <button role="tab" aria-selected={activeTab === tab.id} key={tab.id} onClick={() => setActiveTab(tab.id)} data-testid={`mobile-tab-${tab.id}`} className={`flex min-h-12 items-center justify-center gap-1.5 rounded-xl px-2 text-[12px] font-semibold transition-all ${activeTab === tab.id ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted'}`}><Icon size={15} />{tab.label}</button>; })}
             </div>
             <div className="mb-7 hidden items-end justify-between border-b border-border md:flex">
-              <div className="flex gap-7" role="tablist" aria-label="KuralGuard tools">
+              <div className="flex gap-7" role="tablist" aria-label="KuralGuard கருவிகள்">
                 {tabs.map((tab) => { const Icon = tab.icon; return <button role="tab" aria-selected={activeTab === tab.id} key={tab.id} onClick={() => setActiveTab(tab.id)} data-testid={`desktop-tab-${tab.id}`} className={`relative flex items-center gap-2 pb-4 text-[13px] font-semibold transition-colors ${activeTab === tab.id ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}><Icon size={16} />{tab.label}<span className={`absolute inset-x-0 -bottom-px h-[2px] transition-opacity ${activeTab === tab.id ? 'bg-primary opacity-100' : 'opacity-0'}`} /></button>; })}
               </div>
               <p className="mb-4 font-data text-[10px] text-muted-foreground">{tabs.find((item) => item.id === activeTab)?.note}</p>
@@ -84,8 +84,8 @@ function Home() {
               {activeTab === 'evaluation' && <EvaluationPanel />}
             </div>
             <footer className="mt-14 flex flex-col gap-3 border-t border-border pt-5 text-[11px] leading-5 text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-              <span>Rooted in the Tirukkural. Humble about what a search can know.</span>
-              <span className="font-data uppercase tracking-[.12em]">Corpus lookup · Not an authenticity oracle</span>
+              <span>திருக்குறளை அடிப்படையாகக் கொண்ட தேடல். தேடலின் வரம்புகளை உணர்ந்து செயல்படுகிறோம்.</span>
+              <span className="font-data uppercase tracking-[.12em]">தொகுப்பு தேடல் · உண்மைத்தன்மைக்கான முழு உத்தரவாதம் அல்ல</span>
             </footer>
           </div>
         </section>
@@ -97,7 +97,7 @@ function Home() {
 function Brand({ compact = false }: { compact?: boolean }) {
   return <div className="flex items-center gap-3" data-testid="brand-kuralguard">
     <div className="flex h-10 w-10 items-center justify-center rounded-[13px] border border-sidebar-primary/40 bg-sidebar-primary/10 text-sidebar-primary"><BookOpen size={19} strokeWidth={1.7} /></div>
-    <div><div className={`font-display text-[18px] leading-5 tracking-[-.03em] ${compact ? 'text-foreground' : 'text-sidebar-foreground'}`}>KuralGuard</div><div className={`mt-1 font-data text-[9px] uppercase tracking-[.19em] ${compact ? 'text-muted-foreground' : 'text-sidebar-foreground/45'}`}>குறள் · corpus care</div></div>
+    <div><div className={`font-display text-[18px] leading-5 tracking-[-.03em] ${compact ? 'text-foreground' : 'text-sidebar-foreground'}`}>KuralGuard</div><div className={`mt-1 font-data text-[9px] uppercase tracking-[.19em] ${compact ? 'text-muted-foreground' : 'text-sidebar-foreground/45'}`}>குறள் · உரைச் சரிபார்ப்பு</div></div>
   </div>;
 }
 
@@ -114,36 +114,36 @@ function VerifyPanel() {
   const onSubmit = (event: FormEvent) => { event.preventDefault(); if (!text.trim()) return; verify.mutate({ data: { text: text.trim(), ...(claimedId ? { claimed_id: Number(claimedId) } : {}) } }); };
   return <div className="grid gap-6 lg:grid-cols-[minmax(0,1.06fr)_minmax(320px,.94fr)]">
     <section className="rounded-[22px] border border-border bg-card p-5 shadow-[0_8px_32px_hsl(36_26%_45%/.05)] sm:p-7">
-      <div className="flex items-start justify-between gap-3"><div><p className="font-data text-[10px] uppercase tracking-[.18em] text-muted-foreground">01 / Single quotation</p><h2 className="mt-2 font-display text-[24px] tracking-[-.02em]">Check a passage</h2></div><span className="rounded-full bg-secondary px-3 py-1.5 font-data text-[10px] text-secondary-foreground">LOCAL CORPUS</span></div>
+      <div className="flex items-start justify-between gap-3"><div><p className="font-data text-[10px] uppercase tracking-[.18em] text-muted-foreground">01 / ஒரு மேற்கோள்</p><h2 className="mt-2 font-display text-[24px] tracking-[-.02em]">ஒரு பகுதியைச் சரிபார்க்கவும்</h2></div><span className="rounded-full bg-secondary px-3 py-1.5 font-data text-[10px] text-secondary-foreground">உள்ளூர் தொகுப்பு</span></div>
       <form className="mt-7" onSubmit={onSubmit}>
-        <label htmlFor="quote-input" className="mb-2 flex items-center justify-between text-[12px] font-semibold">Quotation text <span className="font-normal text-muted-foreground">Tamil text only</span></label>
-        <textarea id="quote-input" data-testid="input-quote" value={text} onChange={(event) => setText(event.target.value)} maxLength={5000} placeholder="Paste the quoted text here…" className="min-h-[164px] w-full resize-y rounded-xl border border-input bg-background px-4 py-3.5 text-[15px] leading-7 outline-none placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/15" />
+        <label htmlFor="quote-input" className="mb-2 flex items-center justify-between text-[12px] font-semibold">மேற்கோள் உரை <span className="font-normal text-muted-foreground">தமிழ் உரை மட்டும்</span></label>
+        <textarea id="quote-input" data-testid="input-quote" value={text} onChange={(event) => setText(event.target.value)} maxLength={5000} placeholder="மேற்கோள் உரையை இங்கே ஒட்டவும்…" className="min-h-[164px] w-full resize-y rounded-xl border border-input bg-background px-4 py-3.5 text-[15px] leading-7 outline-none placeholder:text-muted-foreground/60 focus:border-primary focus:ring-2 focus:ring-primary/15" />
         <div className="mt-3">
           <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <span className="font-data text-[9px] uppercase tracking-[.13em] text-muted-foreground">Try a sample from the corpus</span>
-            {!sampleReady && !sampleOne.isError && !sampleTwo.isError && <span className="font-data text-[9px] text-muted-foreground">{sampleOne.isLoading || sampleTwo.isLoading ? 'Loading samples…' : ''}</span>}
+            <span className="font-data text-[9px] uppercase tracking-[.13em] text-muted-foreground">தொகுப்பிலிருந்து மாதிரியைத் தேர்ந்தெடுக்கவும்</span>
+            {!sampleReady && !sampleOne.isError && !sampleTwo.isError && <span className="font-data text-[9px] text-muted-foreground">{sampleOne.isLoading || sampleTwo.isLoading ? 'மாதிரிகளை ஏற்றுகிறது…' : ''}</span>}
           </div>
           <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => samples && setText(samples.real)} disabled={!samples} data-testid="button-sample-real" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">Real quote</button>
-            <button type="button" onClick={() => samples && setText(samples.spliced)} disabled={!samples} data-testid="button-sample-spliced" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">Spliced quote</button>
-            <button type="button" onClick={() => samples && setText(samples.replacement)} disabled={!samples || !samples.replacement} data-testid="button-sample-replacement" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">One-word replacement</button>
+            <button type="button" onClick={() => samples && setText(samples.real)} disabled={!samples} data-testid="button-sample-real" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">உண்மையான குறள்</button>
+            <button type="button" onClick={() => samples && setText(samples.spliced)} disabled={!samples} data-testid="button-sample-spliced" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">இணைக்கப்பட்ட வரிகள்</button>
+            <button type="button" onClick={() => samples && setText(samples.replacement)} disabled={!samples || !samples.replacement} data-testid="button-sample-replacement" className="rounded-full border border-border bg-background px-3 py-1.5 text-[10px] font-semibold text-foreground transition-colors hover:border-primary hover:text-primary disabled:cursor-wait disabled:opacity-50">ஒரு சொல் மாற்றம்</button>
           </div>
-          {(sampleOne.isError || sampleTwo.isError) && <p className="mt-2 text-[11px] leading-5 text-muted-foreground" data-testid="error-sample-source">Corpus samples are unavailable. Enter a quotation to check it manually.</p>}
-          {sampleReady && !samples?.replacement && <p className="mt-2 text-[11px] leading-5 text-muted-foreground" data-testid="text-sample-replacement-unavailable">No distinct replacement word is available in these two couplets.</p>}
+          {(sampleOne.isError || sampleTwo.isError) && <p className="mt-2 text-[11px] leading-5 text-muted-foreground" data-testid="error-sample-source">தொகுப்பு மாதிரிகளைப் பெற முடியவில்லை. சரிபார்க்க உரையை உள்ளிடலாம்.</p>}
+          {sampleReady && !samples?.replacement && <p className="mt-2 text-[11px] leading-5 text-muted-foreground" data-testid="text-sample-replacement-unavailable">இந்த இரண்டு குறள்களிலும் மாற்றிப் பயன்படுத்தத் தனித்த சொல் இல்லை.</p>}
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-[1fr_auto] sm:items-end">
-          <label className="block text-[12px] font-semibold">Claimed Kural number <span className="font-normal text-muted-foreground">(optional)</span><div className="relative mt-2"><input data-testid="input-claimed-id" type="number" min="1" max="1330" value={claimedId} onChange={(event) => setClaimedId(event.target.value)} placeholder="e.g. 391" className="h-11 w-full rounded-xl border border-input bg-background px-3 pr-10 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" /><ChevronDown className="pointer-events-none absolute right-3 top-3.5 rotate-[-90deg] text-muted-foreground" size={15} /></div>{kuralLookup.data && <span className="mt-2 block rounded-lg bg-muted px-3 py-2 font-normal text-muted-foreground" data-testid="text-claimed-kural-preview"><span className="font-tamil text-foreground">{kuralLookup.data.line1}</span><br /><span className="font-tamil text-foreground">{kuralLookup.data.line2}</span><br /><span className="font-data text-[9px]">{kuralLookup.data.chapter_name}</span></span>}{kuralLookup.isError && <span className="mt-2 block text-[11px] font-normal text-muted-foreground" data-testid="error-kural-lookup">Kural lookup unavailable.</span>}</label>
-          <button data-testid="button-verify-quote" type="submit" disabled={!text.trim() || verify.isPending} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-[13px] font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">{verify.isPending ? <LoaderCircle className="animate-spin" size={16} /> : <FileSearch size={16} />}{verify.isPending ? 'Checking…' : 'Check quotation'}<ArrowRight size={15} /></button>
+          <label className="block text-[12px] font-semibold">கூறப்பட்ட குறள் எண் <span className="font-normal text-muted-foreground">(விருப்பம்)</span><div className="relative mt-2"><input data-testid="input-claimed-id" type="number" min="1" max="1330" value={claimedId} onChange={(event) => setClaimedId(event.target.value)} placeholder="எ.கா. 391" className="h-11 w-full rounded-xl border border-input bg-background px-3 pr-10 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/15" /><ChevronDown className="pointer-events-none absolute right-3 top-3.5 rotate-[-90deg] text-muted-foreground" size={15} /></div>{kuralLookup.data && <span className="mt-2 block rounded-lg bg-muted px-3 py-2 font-normal text-muted-foreground" data-testid="text-claimed-kural-preview"><span className="font-tamil text-foreground">{kuralLookup.data.line1}</span><br /><span className="font-tamil text-foreground">{kuralLookup.data.line2}</span><br /><span className="font-data text-[9px]">அதிகாரம் {kuralLookup.data.chapter_no} · {kuralLookup.data.chapter_name}</span></span>}{kuralLookup.isError && <span className="mt-2 block text-[11px] font-normal text-muted-foreground" data-testid="error-kural-lookup">குறள் தகவலைப் பெற முடியவில்லை.</span>}</label>
+          <button data-testid="button-verify-quote" type="submit" disabled={!text.trim() || verify.isPending} className="flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-[13px] font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50">{verify.isPending ? <LoaderCircle className="animate-spin" size={16} /> : <FileSearch size={16} />}{verify.isPending ? 'சரிபார்க்கிறது…' : 'மேற்கோளைச் சரிபார்'}<ArrowRight size={15} /></button>
         </div>
         {verify.isError && <InlineError message="The quotation could not be checked just now." onRetry={() => verify.mutate({ data: { text: text.trim(), ...(claimedId ? { claimed_id: Number(claimedId) } : {}) } })} />}
       </form>
     </section>
     {verify.data ? <VerificationResult result={verify.data} inputText={text} /> : <section className="relative flex min-h-[310px] flex-col justify-between overflow-hidden rounded-[22px] border border-border bg-[#e9e4d8] p-6 sm:p-8">
       <div className="absolute -right-10 -top-16 h-64 w-64 rounded-full border border-primary/10" /><div className="absolute -right-1 -top-7 h-48 w-48 rounded-full border border-primary/10" />
-      <div className="relative"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><CircleHelp size={19} /></div><p className="mt-5 font-display text-[21px] leading-7">Begin with the words,<br />not the attribution.</p><p className="mt-3 max-w-[290px] text-[13px] leading-6 text-foreground/65">We compare your passage with the local corpus and show where the wording agrees or differs.</p></div>
+       <div className="relative"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary"><CircleHelp size={19} /></div><p className="mt-5 font-display text-[21px] leading-7">முதலில் உரையைப் பார்ப்போம்,<br />கூறப்பட்ட எண்ணை அல்ல.</p><p className="mt-3 max-w-[290px] text-[13px] leading-6 text-foreground/65">உங்கள் உரையை உள்ளூர் தொகுப்புடன் ஒப்பிட்டு, பொருந்தும் மற்றும் வேறுபடும் சொற்களைக் காட்டுகிறோம்.</p></div>
       <div className="relative mt-8 flex items-center gap-3 border-l-2 border-primary/50 pl-4"><span className="h-10 w-10 rounded-full border border-primary/25 bg-primary/5" /><span className="h-px w-14 bg-primary/30" /><span className="h-6 w-6 rounded-full border border-primary/25 bg-primary/5" /><span className="h-px flex-1 bg-primary/30" /></div>
     </section>}
-    <div className="flex items-start gap-3 rounded-xl border border-border/80 bg-secondary/50 px-4 py-3.5 lg:col-span-2"><Sparkles size={15} className="mt-0.5 shrink-0 text-primary" /><p className="text-[12px] leading-5 text-muted-foreground">KuralGuard only searches the Tirukkural corpus. It does not use an LLM to judge authenticity, and a quote not found here may still have another source.</p></div>
+    <div className="flex items-start gap-3 rounded-xl border border-border/80 bg-secondary/50 px-4 py-3.5 lg:col-span-2"><Sparkles size={15} className="mt-0.5 shrink-0 text-primary" /><p className="text-[12px] leading-5 text-muted-foreground">KuralGuard திருக்குறள் தொகுப்பில் மட்டுமே தேடுகிறது. உண்மைத்தன்மையைத் தீர்மானிக்க LLM-ஐப் பயன்படுத்தாது. இங்கு கிடைக்காத மேற்கோள் வேறு நூலில் இருக்கலாம்.</p></div>
   </div>;
 }
 
@@ -178,24 +178,33 @@ function VerificationResult({ result, inputText }: { result: Verification; input
 
 function StatusCard({ verdict, score, matchedId, scope, claimedOk, warning }: { verdict: string; score: number; matchedId: number | null; scope: string | null; claimedOk: boolean | null; warning: string | null }) {
   const style = verdict === 'verified' ? 'status-verified' : verdict === 'near_match' ? 'status-near' : 'status-not-found';
-  const title = verdict === 'verified' ? 'Verified in corpus' : verdict === 'near_match' ? 'Near match — review wording' : 'Not found in corpus';
+  const title = verdict === 'verified' ? 'தொகுப்பில் உறுதிப்படுத்தப்பட்டது' : verdict === 'near_match' ? 'அருகிய பொருத்தம் — உரையை மீள்பார்க்கவும்' : 'தொகுப்பில் கிடைக்கவில்லை';
+  const message = verdict === 'verified'
+    ? 'இந்த உரை உள்ளூர் திருக்குறள் தொகுப்பிலுள்ள ஒரு குறளுடன் அப்படியே பொருந்துகிறது.'
+    : verdict === 'near_match'
+      ? 'இதற்கு நெருக்கமான உரை கிடைத்துள்ளது; ஆனால் இது அப்படியே பொருந்தவில்லை.'
+      : 'இந்தத் தொகுப்பில் பொருந்தும் குறள் கண்டறியப்படவில்லை.';
+  const scopeLabel = scope === 'line1' ? 'முதல் அடி' : scope === 'line2' ? 'இரண்டாம் அடி' : scope === 'full' ? 'முழுக் குறள்' : null;
+  const warningText = warning === 'attribution_mismatch'
+    ? 'கூறப்பட்ட குறள் எண் பொருந்தவில்லை; உரை வேறொரு குறளுடன் பொருந்துகிறது.'
+    : warning ? 'குறள் எண்ணை மீண்டும் சரிபார்க்கவும்.' : null;
   const marker = verdict === 'verified' ? <Check size={17} /> : verdict === 'near_match' ? <TriangleAlert size={17} /> : <FileSearch size={17} />;
   return <section className={`rounded-[20px] border p-5 ${style}`} data-testid={`status-${verdict}`}>
-    <div className="flex items-start justify-between gap-4"><div className="flex items-start gap-3"><span className="mt-0.5">{marker}</span><div><h3 className="text-[15px] font-bold">{title}</h3><p className="mt-1 text-[12px] leading-5 opacity-80">{verdict === 'verified' ? 'The passage matches a couplet in the local Tirukkural corpus.' : verdict === 'near_match' ? 'Related wording was found, but the text is not an exact confirmation.' : 'No matching couplet was identified in this corpus.'}</p></div></div><span className="shrink-0 font-data text-[11px]">{Math.round(score)}%<span className="ml-1 opacity-60">match</span></span></div>
+    <div className="flex items-start justify-between gap-4"><div className="flex items-start gap-3"><span className="mt-0.5">{marker}</span><div><h3 className="text-[15px] font-bold">{title}</h3><p className="mt-1 text-[12px] leading-5 opacity-80">{message}</p></div></div><span className="shrink-0 font-data text-[11px]">{Math.round(score)}%<span className="ml-1 opacity-60">பொருத்தம்</span></span></div>
     <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-current/15 pt-3 font-data text-[10px] uppercase tracking-[.08em] opacity-80">
-      {matchedId !== null && <span>Closest Kural {matchedId}</span>}{scope && <span>Scope: {scope === 'line1' ? 'Line 1' : scope === 'line2' ? 'Line 2' : scope}</span>}{claimedOk !== null && <span>Claimed ID {claimedOk ? 'agrees' : 'differs'}</span>}
-    </div>{warning && <p className="mt-3 text-[12px] leading-5">{warning}</p>}
+      {matchedId !== null && <span>நெருக்கமான பொருத்தம்: குறள் {matchedId}</span>}{scopeLabel && <span>பொருந்திய பகுதி: {scopeLabel}</span>}{claimedOk !== null && <span>கூறிய எண் {claimedOk ? 'பொருந்துகிறது' : 'பொருந்தவில்லை'}</span>}
+    </div>{warningText && <p className="mt-3 text-[12px] leading-5">{warningText}</p>}
   </section>;
 }
 
 function Abstention() {
-  return <div className="rounded-[20px] border border-[#d9b8a3] bg-[#f7eee6] p-5" data-testid="text-abstention"><div className="flex gap-3"><CircleHelp className="mt-0.5 shrink-0 text-[#98543f]" size={17} /><p className="text-[13px] leading-6 text-[#69483c]">Not found in the Tirukkural corpus. This cannot be confirmed as authentic. Please consult a Tamil scholar.</p></div></div>;
+  return <div className="rounded-[20px] border border-[#d9b8a3] bg-[#f7eee6] p-5" data-testid="text-abstention"><div className="flex gap-3"><CircleHelp className="mt-0.5 shrink-0 text-[#98543f]" size={17} /><p className="text-[13px] leading-6 text-[#69483c]">திருக்குறள் தொகுப்பில் இது காணப்படவில்லை. இதன் உண்மைத்தன்மையை உறுதிப்படுத்த முடியாது. தயவுசெய்து தமிழ் அறிஞரிடம் ஆலோசிக்கவும்.</p></div></div>;
 }
 
 function KuralCard({ kural, diff }: { kural: Kural; diff?: Verification['diff'] }) {
   return <section className="overflow-hidden rounded-[20px] border border-border bg-card" data-testid={`card-matched-kural-${kural.id}`}>
-    <div className="flex items-center justify-between border-b border-border bg-muted/55 px-5 py-3"><div className="flex items-center gap-2 font-data text-[10px] uppercase tracking-[.13em] text-muted-foreground"><BookOpen size={14} className="text-primary" />Tirukkural <span className="text-foreground">#{kural.id}</span></div><span className="text-right text-[11px] text-muted-foreground">{kural.chapter_no} · {kural.chapter_name}</span></div>
-    <div className="px-5 py-5 sm:px-6"><p className="font-tamil text-[17px] leading-[2.1] text-foreground" data-testid="text-kural-line1">{renderDiffLine(kural.line1, diff, 'corpus')}</p><p className="font-tamil text-[17px] leading-[2.1] text-foreground" data-testid="text-kural-line2">{renderDiffLine(kural.line2, diff, 'corpus')}</p>{kural.meaning_en && <p className="mt-4 border-t border-border pt-3 text-[12px] italic leading-5 text-muted-foreground" data-testid="text-kural-meaning">{kural.meaning_en}</p>}<div className="mt-4 flex items-center gap-2 font-data text-[9px] uppercase tracking-[.12em] text-muted-foreground"><span className={`h-1.5 w-1.5 rounded-full ${kural.needs_human_review ? 'bg-amber-500' : 'bg-primary'}`} />{kural.needs_human_review ? 'Human review recommended' : 'Corpus record'}</div></div>
+    <div className="flex items-center justify-between border-b border-border bg-muted/55 px-5 py-3"><div className="flex items-center gap-2 font-data text-[10px] uppercase tracking-[.13em] text-muted-foreground"><BookOpen size={14} className="text-primary" />குறள் <span className="text-foreground">#{kural.id}</span><span>· {kural.paal}</span></div><span className="text-right text-[11px] text-muted-foreground">அதிகாரம் {kural.chapter_no} · {kural.chapter_name}</span></div>
+    <div className="px-5 py-5 sm:px-6"><p className="font-tamil text-[17px] leading-[2.1] text-foreground" data-testid="text-kural-line1">{renderDiffLine(kural.line1, diff, 'corpus')}</p><p className="font-tamil text-[17px] leading-[2.1] text-foreground" data-testid="text-kural-line2">{renderDiffLine(kural.line2, diff, 'corpus')}</p>{kural.meaning_en && <details className="mt-4 border-t border-border pt-3 text-[12px] leading-5 text-muted-foreground" data-testid="text-kural-meaning"><summary className="cursor-pointer font-semibold">மூலத்தில் உள்ள ஆங்கிலப் பொருளைக் காண்க</summary><p className="mt-2 italic">{kural.meaning_en}</p></details>}<div className="mt-4 flex items-center gap-2 font-data text-[9px] uppercase tracking-[.12em] text-muted-foreground"><span className={`h-1.5 w-1.5 rounded-full ${kural.needs_human_review ? 'bg-amber-500' : 'bg-primary'}`} />{kural.needs_human_review ? 'மனிதர் சரிபார்ப்பு பரிந்துரைக்கப்படுகிறது' : 'தொகுப்பிலுள்ள பதிவு'}</div></div>
   </section>;
 }
 
@@ -219,7 +228,7 @@ function renderDiffLine(text: string, diff: Verification['diff'] | undefined, fi
 
 function DiffComparison({ diff, inputText }: { diff: Verification['diff']; inputText: string }) {
   if (!diff.length) return null;
-  return <section className="rounded-[18px] border border-border bg-card p-4 sm:p-5" data-testid="word-diff"><div className="mb-3 flex items-center justify-between"><h3 className="text-[12px] font-semibold">Wording comparison</h3><span className="font-data text-[9px] uppercase tracking-[.1em] text-muted-foreground">Input / corpus</span></div><div className="grid grid-cols-2 gap-3 border-b border-border pb-2 font-data text-[9px] uppercase tracking-[.12em] text-muted-foreground"><span>Your text</span><span>Corpus text</span></div><div className="divide-y divide-border">{diff.map((part, index) => <div key={`${index}-${part.kind}`} className="grid grid-cols-2 gap-3 py-2.5 text-[12px] leading-5"><span className={part.kind === 'input_only' || part.kind === 'changed' ? 'rounded bg-[#f5e4dc] px-1 text-[#87513e]' : 'text-foreground'}>{part.input || <span className="text-muted-foreground/50">—</span>}</span><span className={part.kind === 'corpus_only' || part.kind === 'changed' ? 'rounded bg-[#e7f0e9] px-1 text-[#285b49]' : 'text-foreground'}>{part.corpus || <span className="text-muted-foreground/50">—</span>}</span></div>)}</div><p className="mt-2 border-t border-border pt-3 text-[10px] leading-4 text-muted-foreground">Input: {inputText}</p></section>;
+  return <section className="rounded-[18px] border border-border bg-card p-4 sm:p-5" data-testid="word-diff"><div className="mb-3 flex items-center justify-between"><h3 className="text-[12px] font-semibold">சொல் ஒப்பீடு</h3><span className="font-data text-[9px] uppercase tracking-[.1em] text-muted-foreground">உள்ளீடு / தொகுப்பு</span></div><div className="grid grid-cols-2 gap-3 border-b border-border pb-2 font-data text-[9px] uppercase tracking-[.12em] text-muted-foreground"><span>நீங்கள் அளித்த உரை</span><span>தொகுப்பு உரை</span></div><div className="divide-y divide-border">{diff.map((part, index) => <div key={`${index}-${part.kind}`} className="grid grid-cols-2 gap-3 py-2.5 text-[12px] leading-5"><span className={part.kind === 'input_only' || part.kind === 'changed' ? 'rounded bg-[#f5e4dc] px-1 text-[#87513e]' : 'text-foreground'}>{part.input || <span className="text-muted-foreground/50">—</span>}</span><span className={part.kind === 'corpus_only' || part.kind === 'changed' ? 'rounded bg-[#e7f0e9] px-1 text-[#285b49]' : 'text-foreground'}>{part.corpus || <span className="text-muted-foreground/50">—</span>}</span></div>)}</div><p className="mt-2 border-t border-border pt-3 text-[10px] leading-4 text-muted-foreground">நீங்கள் உள்ளிட்டது: {inputText}</p></section>;
 }
 
 function GuardPanel() {
