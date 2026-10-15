@@ -1,45 +1,63 @@
-# [Project name]
+# KuralGuard
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+KuralGuard checks Tamil quotations against a fetched local Tirukkural corpus and abstains when it cannot confirm a match.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `./run.sh` — build the local corpus and evaluation report, then start FastAPI and the web app
+- `python3.11 scripts/build_corpus.py` — fetch and validate source data
+- `python3.11 eval/run_eval.py` — regenerate the deterministic evaluation set and metrics
+- `python3.11 -m pytest -q` — run backend tests
 - `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- `PORT=5173 BASE_PATH=/ pnpm run build` — typecheck + build all packages (the Vite packages require these values)
+- Required runtime: Python 3.11, Node.js, and pnpm
+- Python dependencies: `requirements.txt`
+- No database or API key is required
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
+- API: FastAPI + Pydantic
+- Corpus: immutable raw source snapshots, normalized JSON runtime corpus
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Web: React + Vite, Recharts, Noto Sans Tamil
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `config.py` — environment-backed paths, public sources, CORS, and matching thresholds
+- `scripts/build_corpus.py` — immutable-source downloader, cross-checker, and corpus validator
+- `engine/` — normalization and local-only exact/fuzzy matching
+- `guard/` — FastAPI routes and quote extraction/annotation
+- `eval/` — seed-42 generated cases and threshold-sweep report
+- `data/raw/` — fetched upstream snapshots; do not edit them
+- `data/clean/kural.json` — normalized runtime source of truth
+- `lib/api-spec/openapi.yaml` — API contract and generated TypeScript hooks
+- `artifacts/kuralguard/` — registered React/Vite interface
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- `/verify` has no network or LLM dependency; the local corpus is the only authority.
+- A missing quote is an abstention, never a claim that it is fake.
+- Two-source disagreements keep source A and are marked for human review.
+- The requested API was unavailable at build time; the builder falls back to the separately hosted Senkanthal API.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Verify one Tamil quote and optional attribution.
+- Guard a pasted chatbot answer by extracting and checking candidate quotations.
+- Inspect generated evaluation metrics and threshold trade-offs.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Never invent or manually edit Tirukkural text; use fetched source files only.
+- Use “not found / cannot confirm” and advise consultation with a Tamil scholar; never say a quote is fake.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run `scripts/build_corpus.py` before starting the API if the cleaned corpus is absent or source data changes.
+- `data/raw/` is immutable; the builder reuses existing snapshots instead of overwriting them.
 
 ## Pointers
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- See `README.md` for source details, licensing, threshold rationale, setup, and limitations.

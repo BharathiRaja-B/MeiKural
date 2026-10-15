@@ -1,0 +1,120 @@
+# KuralGuard
+
+KuralGuard checks Tamil quotations against a local Tirukkural corpus. Exact
+corpus matches can be confirmed; near matches show the corresponding source
+text for review; a missing match is **not** a claim that a quote is fake.
+`/verify` is deterministic and uses no LLM or network lookup.
+
+## Run it
+
+The single-stack command builds/checks the corpus, creates the deterministic
+evaluation report, then starts the FastAPI server and React/Vite interface:
+
+```bash
+python3.11 -m pip install -r requirements.txt
+pnpm install
+chmod +x run.sh
+./run.sh
+```
+
+The development services are available at:
+
+- Web interface: `http://127.0.0.1:5173/`
+- API health: `http://127.0.0.1:8000/api/health` (the API also accepts `/health`)
+- FastAPI docs: `http://127.0.0.1:8000/docs`
+
+In Replit, the managed preview runs the web artifact at `/` and routes the API
+artifact at `/api`.
+
+Individual steps:
+
+```bash
+python3.11 scripts/build_corpus.py
+python3.11 eval/run_eval.py
+python3.11 -m pytest -q
+pnpm run typecheck
+```
+
+The React + Vite source is in the registered app at
+`artifacts/kuralguard/` (the `web/` directory points to this workspace-specific
+location). The root `config.py` reads `.env` when present. Copy `.env.example`
+to `.env` only when you need to override public source URLs, thresholds, paths,
+or CORS settings. There are no API keys in the project.
+
+## Corpus sources and handling
+
+The corpus builder inspects and fetches source A's actual JSON layout:
+
+- [tk120404/thirukkural](https://github.com/tk120404/thirukkural) —
+  `thirukkural.json` supplies couplet text and English translation;
+  `detail.json` supplies paal and chapter metadata. The repository declares
+  Apache-2.0.
+- [api-thirukkural.vercel.app](https://api-thirukkural.vercel.app/) — the
+  configured primary API source uses its documented `?num={id}` endpoint. It
+  returned HTTP 402 during this build, so the script falls back to a second,
+  independent API:
+  [Senkanthal's Thirukkural API](https://github.com/senkanthal/thirukkural-api),
+  `GET /kural`, documented at
+  [thirukkural.senkanthal.org/openapi.json](https://thirukkural.senkanthal.org/openapi.json).
+  Senkanthal's repository declares MIT and states its data is free to use.
+
+The exact downloaded bytes are preserved under `data/raw/` and are never
+rewritten by the builder. Raw snapshots are excluded from Git/deployment;
+`data/clean/kural.json` is the normalized runtime corpus. The builder compares
+each source's Tamil lines. With two sources, any disagreement is a tie: source
+A is retained and `needs_human_review` is set. Every disagreement is written
+to `data/clean/mismatches.csv`. The builder fails rather than emitting a partial
+corpus if it cannot obtain two complete sources or if the 1,330/133-by-10
+integrity checks fail.
+
+## Matching and threshold
+
+Normalization applies Unicode NFC, removes U+200B/U+200C/U+200D, strips
+punctuation and digits, retains Tamil letters and combining marks, and folds
+whitespace. Exact comparison ignores spaces. The engine indexes full
+couplets and each line separately.
+
+For non-exact candidates, the score combines RapidFuzz character-level ratio
+(70%) and Dice word-overlap (30%). `NEAR_THRESHOLD` defaults to 80, as requested.
+The seed-42 synthetic evaluation at 80 reports 100% recall on its 100 real
+examples, 100% near-match detection on its 20 one-word substitutions, 0%
+fake-to-verified false accepts, and 98% abstention on its 50 generated fakes.
+The threshold sweep showed 85 also kept full recall on this generated set while
+abstaining on all 50 fakes; the default remains 80 rather than overfitting a
+small synthetic set. These are not scholarly validation results.
+
+`eval/eval_set.json` and `eval/results.json` are generated from the fetched
+corpus with a deterministic random seed of 42. The set contains 50 exact or
+formatting-variant real quotes, 30 one-character typos, 20 one-word
+substitutions, 30 line splices (split between same- and cross-chapter), and 20
+word shuffles. If `eval/manual_fakes.json` exists, its entries are added.
+
+## API
+
+The registered API service is mounted at `/api` in Replit. The FastAPI app also
+accepts the same routes without that prefix for direct local use:
+
+- `GET /health` and `GET /healthz`
+- `GET /kural/{id}`
+- `POST /verify` with `{ "text": "...", "claimed_id": 123 }`
+- `POST /guard` with `{ "llm_answer": "..." }`
+- `GET /eval/results`
+
+Guard extracts text inside common quotation marks and standalone lines with at
+least four Tamil words, associates nearby Kural citations, and sends every
+candidate to the same local matcher. Not-found annotations use the required
+scholar-consultation abstention statement. The current MVP accepts pasted
+answers from any chatbot; optional LLM answer generation is not enabled.
+
+## Limitations
+
+- Editions, orthography, spacing, punctuation, and editorial variants can
+  differ. Source conflicts are flagged, not silently adjudicated.
+- The corpus contains the Tirukkural only. A passage from other Tamil
+  literature is outside its scope.
+- English translations are displayed as reference metadata; the matcher
+  deliberately checks Tamil letters only.
+- Near-match thresholds and generated fakes are evaluation aids, not proof of
+  authenticity. A Tamil scholar remains the authority for uncertain passages.
+- `not_found` means only “not in this local corpus; cannot confirm.” It must
+  never be presented as “fake.”
