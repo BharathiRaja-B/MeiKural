@@ -1,2 +1,2 @@
 # MeiKural
-AI powered Tamil Thirukkural and other literature ssaviour ;)
+AI powered Tamil Thirukkural and other literature saviour ;)
