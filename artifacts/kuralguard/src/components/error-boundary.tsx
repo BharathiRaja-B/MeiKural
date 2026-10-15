@@ -36,15 +36,17 @@ function toError(value: unknown): Error {
 }
 
 function DefaultFallback({ error, resetError }: ErrorFallbackProps) {
+  const isTamil = document.documentElement.lang !== 'en';
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-50 p-6">
       <div className="max-w-lg w-full text-center">
         <h1 className="text-xl font-semibold text-gray-900">
-          Something went wrong
+          {isTamil ? 'சிக்கல் ஏற்பட்டது' : 'Something went wrong'}
         </h1>
         <p className="mt-2 text-sm text-gray-600">
-          This part of the app hit an error. The rest of the app is still
-          running.
+          {isTamil
+            ? 'இந்தப் பகுதியில் பிழை ஏற்பட்டது. பயன்பாட்டின் பிற பகுதிகள் தொடர்ந்து இயங்குகின்றன.'
+            : 'This part of the app hit an error. The rest of the app is still running.'}
         </p>
         {/* Dev only: messages can carry API responses and other internals. */}
         {import.meta.env.DEV ? (
@@ -57,7 +59,7 @@ function DefaultFallback({ error, resetError }: ErrorFallbackProps) {
           onClick={resetError}
           className="mt-4 rounded bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-700"
         >
-          Try again
+          {isTamil ? 'மீண்டும் முயற்சி' : 'Try again'}
         </button>
       </div>
     </div>

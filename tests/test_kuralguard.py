@@ -45,10 +45,45 @@ def test_normalization_keeps_only_normalized_tamil_words(matcher: Matcher) -> No
 
 def test_exact_full_couplet_is_verified(matcher: Matcher) -> None:
     record = CORPUS[0]
-    result = matcher.verify(f"{record['line1']} {record['line2']}")
+    result = matcher.verify(f"{record['line1']}\n{record['line2']}")
     assert result.verdict == "verified"
     assert result.matched_id == record["id"]
     assert result.matched_scope == "full"
+
+
+def test_flattened_full_couplet_is_not_verified(matcher: Matcher) -> None:
+    record = CORPUS[0]
+    result = matcher.verify(f"{record['line1']} {record['line2']}")
+    assert result.verdict == "near_match"
+    assert result.score < 100
+    assert result.warning == "line_word_count_mismatch"
+
+
+def test_full_couplet_with_wrong_line_word_counts_is_not_verified(
+    matcher: Matcher,
+) -> None:
+    record = CORPUS[0]
+    first_line_words = record["line1"].split()
+    malformed = (
+        f"{' '.join(first_line_words[:3])}\n"
+        f"{' '.join(first_line_words[3:])} {record['line2']}"
+    )
+    result = matcher.verify(malformed)
+    assert result.verdict == "near_match"
+    assert result.score < 100
+    assert result.warning == "line_word_count_mismatch"
+
+
+def test_exact_corpus_shape_exception_is_not_verified(matcher: Matcher) -> None:
+    record = next(
+        item for item in CORPUS
+        if len(normalize(item["line1"]).split()) != 4
+        or len(normalize(item["line2"]).split()) != 3
+    )
+    result = matcher.verify(f"{record['line1']}\n{record['line2']}")
+    assert result.verdict == "near_match"
+    assert result.score < 100
+    assert result.warning == "line_word_count_mismatch"
 
 
 def test_punctuation_and_extra_spaces_are_ignored(matcher: Matcher) -> None:
@@ -79,17 +114,19 @@ def test_spliced_couplet_is_never_verified(matcher: Matcher) -> None:
 def test_half_couplet_matches(field: str, matcher: Matcher) -> None:
     record = CORPUS[3]
     result = matcher.verify(record[field])
-    assert result.verdict == "verified"
+    assert result.verdict == "near_match"
+    assert result.score < 100
     assert result.matched_id == record["id"]
     assert result.matched_scope == field
+    assert result.warning == "line_word_count_mismatch"
 
 
 def test_wrong_claimed_id_is_flagged_as_attribution_mismatch(
     matcher: Matcher,
 ) -> None:
-    record = CORPUS[4]
+    record = CORPUS[0]
     wrong_id = record["id"] + 1
-    result = matcher.verify(record["line1"], claimed_id=wrong_id)
+    result = matcher.verify(f"{record['line1']}\n{record['line2']}", claimed_id=wrong_id)
     assert result.verdict == "verified"
     assert result.matched_id == record["id"]
     assert result.claimed_id_ok is False
@@ -97,8 +134,8 @@ def test_wrong_claimed_id_is_flagged_as_attribution_mismatch(
 
 
 def test_matching_claimed_id_is_confirmed(matcher: Matcher) -> None:
-    record = CORPUS[5]
-    result = matcher.verify(record["line2"], claimed_id=record["id"])
+    record = CORPUS[0]
+    result = matcher.verify(f"{record['line1']}\n{record['line2']}", claimed_id=record["id"])
     assert result.claimed_id_ok is True
     assert result.warning is None
 
@@ -115,7 +152,7 @@ def test_guard_extracts_quotes_and_associates_citation() -> None:
     other_a, other_b = CORPUS[8], CORPUS[13]
     fake = f"{other_a['line1']} {other_b['line2']}"
     answer = (
-        f"“{record['line1']} {record['line2']}” — Kural {record['id']}.\n\n"
+        f"“{record['line1']}\n{record['line2']}” — Kural {record['id']}.\n\n"
         + "Context without a quotation. " * 8
         + f"\n“{fake}”"
     )
@@ -132,7 +169,7 @@ def test_guard_endpoint_annotates_one_real_and_one_spliced_quote() -> None:
         "/api/guard",
         json={
             "llm_answer": (
-                f"“{real['line1']} {real['line2']}” — Kural {real['id']}.\n\n"
+                f"“{real['line1']}\n{real['line2']}” — Kural {real['id']}.\n\n"
                 + "More context. " * 12
                 + f"\n“{fake}”"
             )
@@ -149,10 +186,10 @@ def test_guard_endpoint_annotates_one_real_and_one_spliced_quote() -> None:
 
 
 def test_verify_endpoint_uses_local_corpus() -> None:
-    record = CORPUS[6]
+    record = CORPUS[0]
     response = client.post(
         "/api/verify",
-        json={"text": record["line1"], "claimed_id": record["id"] + 1},
+        json={"text": f"{record['line1']}\n{record['line2']}", "claimed_id": record["id"] + 1},
     )
     assert response.status_code == 200
     payload = response.json()

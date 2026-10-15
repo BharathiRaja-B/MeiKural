@@ -22,6 +22,7 @@ from engine.normalize import normalize, normalize_compact
 
 Scope = Literal["full", "line1", "line2"]
 Verdict = Literal["verified", "near_match", "not_found"]
+EXPECTED_LINE_WORD_COUNTS = (4, 3)
 
 
 @dataclass(frozen=True)
@@ -103,6 +104,22 @@ def _record_text(record: dict[str, Any], scope: Scope) -> str:
     return str(record[scope])
 
 
+def _word_counts_by_line(text: str) -> list[int]:
+    return [
+        len(words)
+        for line in text.splitlines()
+        if (words := normalize(line).split())
+    ]
+
+
+def _has_expected_couplet_shape(text: str, record: dict[str, Any]) -> bool:
+    return (
+        _word_counts_by_line(text) == list(EXPECTED_LINE_WORD_COUNTS)
+        and _word_counts_by_line(str(record["line1"])) == [4]
+        and _word_counts_by_line(str(record["line2"])) == [3]
+    )
+
+
 class Matcher:
     """An in-memory index of all full couplets and both half-couplets."""
 
@@ -158,20 +175,36 @@ class Matcher:
         ]
         if exact_candidates:
             selected = self._select_claimed_candidate(exact_candidates, claimed_id)
+            matched_id = int(selected.record["id"])
+            if selected.scope != "full" or not _has_expected_couplet_shape(
+                text, selected.record
+            ):
+                return Verification(
+                    verdict="near_match",
+                    matched_id=matched_id,
+                    score=99.0,
+                    matched_scope=selected.scope,
+                    diff=_word_diff(text, selected.text),
+                    claimed_id_ok=(
+                        None if claimed_id is None else matched_id == claimed_id
+                    ),
+                    warning="line_word_count_mismatch",
+                    matched_kural=selected.record,
+                )
             return Verification(
                 verdict="verified",
-                matched_id=int(selected.record["id"]),
+                matched_id=matched_id,
                 score=100.0,
                 matched_scope=selected.scope,
                 diff=[],
                 claimed_id_ok=(
                     None if claimed_id is None
-                    else int(selected.record["id"]) == claimed_id
+                    else matched_id == claimed_id
                 ),
                 warning=(
                     "attribution_mismatch"
                     if claimed_id is not None
-                    and int(selected.record["id"]) != claimed_id
+                    and matched_id != claimed_id
                     else None
                 ),
                 matched_kural=selected.record,
