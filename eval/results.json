@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15T09:09:01.168122+00:00",
+  "generated_at": "2026-10-15T10:30:45.040653+00:00",
   "near_threshold": 80,
   "metrics": {
     "false_accept_rate": 0.0,
@@ -338,15 +338,15 @@
     {
       "threshold": 100,
       "false_accept_rate": 0.0,
-      "real_recall": 0.5,
+      "real_recall": 0.47,
       "verified_precision": 1.0,
       "tricky_near_match_rate": 0.0,
       "fake_abstain_rate": 1.0
     }
   ],
   "verdict_counts": {
-    "verified": 50,
-    "near_match": 51,
+    "verified": 47,
+    "near_match": 54,
     "not_found": 49
   },
   "dataset_counts": {
